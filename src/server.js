@@ -1,11 +1,9 @@
 const express = require("express");
 const bodyParser = require('body-parser');
-// const cors = require("cors");
 
 const app = express();
 const port = 3000
 
-// app.use(cors());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
@@ -13,28 +11,27 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const host = 'localhost';
 const path = require('path')
+const userRoute = require("./routes/userRoute");
 
 app.use(express.static(__dirname + '../client'));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/home.html'));
+app.use("/", userRoute);
+
+app.get('/home', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/pages/home.html'));
   
 });
 
 app.get('/home.js', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/home.js'));
+  res.sendFile(path.join(__dirname, '../client/scripts/home.js'));
   
 });
 
 app.get('/global.css', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/global.css'));
+  res.sendFile(path.join(__dirname, '../client/styles/global.css'));
   
 });
 
-// app.get('/styles.css', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client/styles/global.css'));
-  
-// });
 
 io.on('connection', (socket) => {
   socket.on('chat message', msg => {
@@ -49,8 +46,3 @@ io.on('connection', (socket) => {
 http.listen(port, host, () => {
   console.log(`Socket.IO server running at http://${host}:${port}/`);
 });
-
-// server = app.listen(port, () => {
-//   console.log(`Server open on port ${port}`);
-// });
- 
